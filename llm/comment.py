@@ -1,4 +1,4 @@
-from llm.llmKey import *
+from llmKey import *
 
 from langchain_upstage import ChatUpstage
 from langchain_core.messages import HumanMessage, SystemMessage
