@@ -1,1 +1,5 @@
+#API KEY
 llm/llmKey.py
+
+#CACHE
+__pycache__/
