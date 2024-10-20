@@ -1,5 +1,5 @@
 import json
-import score_weight
+from score_weight import *
 
 #langchain 및 vectorDB 관련 import
 from langchain_community.vectorstores import FAISS
@@ -7,20 +7,10 @@ from langchain_huggingface import HuggingFaceEmbeddings
 
 from pathlib import Path
 
-def tupleToDictionary(product):
-   dictionary = {
-      "productName":product[0],
-      "averageStarcount":product[1],
-      "review":product[2],
-      "postDate":product[3]
-      }
-   
-   return dictionary
-
 def dictionaryToTuple(product, score):
    return (product.get("productName"), product.get("averageStarcount"), product.get("review"), product.get("postDate"), score)
 
-# productList는 (productName, averageStarCount, review, postDate) 순서로 데이터 받음(튜플 형태)
+# productList는 Product 클래스(productName, averageStarCount, review, postDate) 순서로 데이터 받음
 # shoppingMallName을 통해 각 쇼핑몰별 vectorDB 구별
 # update = True일 시 productList로 vectorDB 업데이트
 def loadVectorDB(productList, shoppingMallName, update=False):
@@ -33,8 +23,8 @@ def loadVectorDB(productList, shoppingMallName, update=False):
     hf = HuggingFaceEmbeddings(model_name='jhgan/ko-sroberta-multitask')
 
     # productList에서 productName만 추출하여 임베딩
-    productNames = [product[0] for product in productList]
-    productDictionary = [tupleToDictionary(product) for product in productList]
+    productNames = [product.productName for product in productList]
+    productDictionary = [product.__dict__ for product in productList]
 
     if not file_path.exists() or update:  
         # productName을 임베딩하여 인덱스를 생성
@@ -63,8 +53,9 @@ def findSimilarProduct(product, vectorstore, k=4):
     similarProducts = []
     
     for result in results:
-        data = dictionaryToTuple(result.metadata, result.score)
-        similarProducts.append(data)
+        data = result.metadata
+        newProduct = Product(data["productName"], data["averageStarCount"], data["review"], data["postDate"])
+        similarProducts.append(newProduct)
 
     return similarProducts
 
