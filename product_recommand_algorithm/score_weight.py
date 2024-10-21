@@ -40,4 +40,4 @@ class Product:
         elif daysDifference < 30:
             self.score = self.score + 5
         elif daysDifference < 100:
-            self.score = self.score
+            self.score = self.score + 3
