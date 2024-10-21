@@ -11,7 +11,7 @@ def dictionaryToTuple(product, score):
    return (product.get("productName"), product.get("averageStarcount"), product.get("review"), product.get("postDate"), score)
 
 # productList는 Product 클래스(productName, averageStarCount, review, postDate) 순서로 데이터 받음
-# shoppingMallName을 통해 각 쇼핑몰별 vectorDB 구별
+# shoppingMallName을 통해 각 쇼핑몰 별 vectorDB 구별
 # update = True일 시 productList로 vectorDB 업데이트
 def loadVectorDB(productList, shoppingMallName, update=False):
     folder_path = Path("faiss_db/"+shoppingMallName)
@@ -26,6 +26,7 @@ def loadVectorDB(productList, shoppingMallName, update=False):
     productNames = [product.productName for product in productList]
     productDictionary = [product.__dict__ for product in productList]
 
+    # 벡터 db가 현재 존재하지 않거나, 요청할 때 제품 목록을 업데이트 해야하는 경우에만 새로운 벡터 db 생성
     if not file_path.exists() or update:  
         # productName을 임베딩하여 인덱스를 생성
         vectorstore = FAISS.from_texts(texts=productNames, embedding=hf, metadatas=productDictionary)
@@ -40,9 +41,9 @@ def loadVectorDB(productList, shoppingMallName, update=False):
 
     return vectorstore
 
-
-def findSimilarProduct(product, vectorstore, k=4):
-    retriever = vectorstore.as_retriever(search_kwargs={"k": 2*k, "return_score": True})
+# k는 반환할 유사한 제품의 개수, isReview, isStarCount, isPostDate는 각각 리뷰 수, 별점, 등록일을 점수에 반영할 지의 여부를 결정, 기본값은 True
+def findSimilarProduct(product, vectorstore, k=4, isReview = True, isStarCount = True, isPostDate = True):
+    retriever = vectorstore.as_retriever(search_kwargs={"k": 2*k})
 
     results = retriever.invoke(product)
     
@@ -55,9 +56,18 @@ def findSimilarProduct(product, vectorstore, k=4):
     for result in results:
         data = result.metadata
         newProduct = Product(data["productName"], data["averageStarCount"], data["review"], data["postDate"])
+        if isReview:
+            newProduct.addReviewCountScore()
+        if isStarCount:
+            newProduct.addStarPointScore()
+        if isPostDate:
+            newProduct.addPostDateScore()
+            
         similarProducts.append(newProduct)
 
-    return similarProducts
+    similarProducts.sort(key=lambda p:(-p.score))
+    
+    return similarProducts[0:k]
 
 def main():
     print("Hello World.")
