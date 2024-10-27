@@ -7,9 +7,6 @@ from langchain_huggingface import HuggingFaceEmbeddings
 
 from pathlib import Path
 
-def dictionaryToTuple(product, score):
-   return (product.get("productName"), product.get("averageStarcount"), product.get("review"), product.get("postDate"), score)
-
 # productList는 Product 클래스(productName, averageStarCount, review, postDate) 순서로 데이터 받음
 # shoppingMallName을 통해 각 쇼핑몰 별 vectorDB 구별
 # update = True일 시 productList로 vectorDB 업데이트
