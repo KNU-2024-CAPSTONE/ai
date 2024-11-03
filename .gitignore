@@ -3,3 +3,6 @@ llm/llmKey.py
 
 #CACHE
 __pycache__/
+
+#FAISS_DB
+faiss_db
