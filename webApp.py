@@ -7,16 +7,24 @@ app = Flask(__name__)
 
 @app.route('/api/ai/outflux', methods=['POST'])
 def outfluxAPI():
-    #Header 추출
-    headers = request.headers
-    lastPurchase = 6 if headers.get('lastPurchase') is None else headers.get('lastPurchase')
-    purchaseWithCategory = 3 if headers.get('purchaseWithCategory') is None else headers.get('purchaseWithCategory')
-    refundPercent = 50 if headers.get('refundPercent') is None else headers.get('refundPercent')
-    number = 5 if headers.get('number') is None else headers.get('number')
-
     #Body 추출
-    purchaseJson = request.get_json()
-    result = distinctCoupon(purchaseJson=purchaseJson, lastPurchase=lastPurchase, purchaseWithCategory=purchaseWithCategory, number=number)
+    body = request.get_json()
+
+    if body and "lastPurchase" in body: lastPurchase = body.get('lastPurchase')
+    else: lastPurchase = 6
+
+    if body and "purchaseWithCategory" in body: purchaseWithCategory = body.get('purchaseWithCategory')
+    else: purchaseWithCategory = 3
+
+    if body and "refundPercent" in body: refundPercent = body.get('refundPercent')
+    else: refundPercent = 50
+
+    if body and "number" in body: number = body.get('number')
+    else: number = 5
+
+    purchaseJson = body.get('purchaseLog')
+
+    result = distinctCoupon(purchaseJson=purchaseJson, lastPurchase=lastPurchase, purchaseWithCategory=purchaseWithCategory, number=number, refundPercent=refundPercent)
     response = make_response(jsonify(result))
     response.status_code = 200
 
