@@ -41,3 +41,12 @@ class Product:
             self.score = self.score + 5
         elif daysDifference < 100:
             self.score = self.score + 3
+
+    def to_dict(self):
+        return {
+            "productName": self.productName,
+            "averageStarCount": self.averageStarCount,
+            "review": self.review,
+            "postDate": self.postDate.__str__(),
+            "score": self.score
+        }
