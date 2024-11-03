@@ -46,6 +46,19 @@ def parseJsonToPurchaseLogClass(data):
 
     return purchaseLogs
 
+class Coupon():
+    def __init__(self, category, code, discount):
+        self.category = category
+        self.code = code
+        self.discount = discount
+
+    def to_dict(self):
+        return {
+            "category": self.category,
+            "code": self.code,
+            "discount": self.discount
+        }
+
 def generateCoupon(length=12):
     characters = string.ascii_uppercase + string.digits
     return ''.join(random.choices(characters, k=length))
@@ -81,14 +94,14 @@ def distinctCoupon(purchaseJson, lastPurchase = 6, purchaseWithCategory = 3, ref
     
     # 6개월 동안(default) 구매기록이 없을 경우 15%(default) 쿠폰 발급
     if not isExit:
-        return None, generateCoupon(), 15
+        return Coupon(None, generateCoupon(), 15).to_dict()
     # 1개월 동안 5번 이상 구매, 절반 이상(default)이 환불일 경우 10% 쿠폰 발급
     if month1 != 0 and (refundCount // month1) * 100 >  refundPercent and month1 > 5:
-        return None, generateCoupon(), 10
+        return Coupon(None, generateCoupon(), 10).to_dict()
     
     # dictionary를 순차 탐색하며 3개월 동안(default) 5회 이상(default) 구매한 카테고리의 10% 쿠폰 발급
     for key, value in month3.items():
         if value >= number:
-            return key, generateCoupon(), 10
+            return Coupon(key, generateCoupon(), 10).to_dict()
     
     return None
