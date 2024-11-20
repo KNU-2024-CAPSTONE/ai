@@ -5,11 +5,13 @@
 POST /api/ai/outflux
 
 Request Body
-- lastPurchase : 마지막 월단위 구매 일자(선택)
-- purchaseWithCategory : 카테고리별 월단위 구매 일자(선택)
-- refundPercent : 환불 비율(선택)
-- number : 환불 횟수(선택)
 - purchaseLog : 구매 기록(필수)
+- lastPurchase : 마지막 월단위 구매 일자(선택)
+- lastRefund : 마지막 월단위 환불 일자(선택)
+- refundPercent : 환불 비율(선택)
+- purchaseWithCategory : 카테고리별 월단위 구매 일자(선택)
+- purchaseNumber : 환불 횟수(선택)
+
 
 Response Body
 
@@ -113,7 +115,8 @@ Request Body
     "lastPurchase":6,
     "purchaseWithCategory":3,
     "refundPercent":50,
-    "number":5
+    "lastRefund":3,
+    "purchaseNumber":5
 }
 '''
 
