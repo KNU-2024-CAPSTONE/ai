@@ -75,9 +75,10 @@ def distinctCoupon(purchaseJson, lastPurchase = 6, lastRefund = 3, refundPercent
     # 최근 6개월동안 이용 내역을 확인하기 위한 변수
     isExit = False
 
-    daysDifference = (datetime.now() - purchaseLog.purchaseTime).days
     #purchaseLogList 값을 하나씩 탐색하며 조건 확인
     for purchaseLog in purchaseLogList:
+        daysDifference = (datetime.now() - purchaseLog.purchaseTime).days
+        
         if daysDifference < 30 * lastRefund:
             month1 = month1 + 1
             if purchaseLog.isRefund: refundCount = refundCount + 1
