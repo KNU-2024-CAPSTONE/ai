@@ -22,6 +22,14 @@ class PurchaseLog():
         self.isRefund = isRefund
 
 def parseJsonToPurchaseLogClass(data):
+    def parse_datetime(date_str):
+        try:
+            # 초 정보가 포함된 경우
+            return datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%S')
+        except ValueError:
+            # 초 정보가 없는 경우
+            return datetime.strptime(date_str, '%Y-%m-%dT%H:%M')
+    
     purchaseLogs = []
     for item in data:
         productInfo = item["product"]
@@ -30,7 +38,7 @@ def parseJsonToPurchaseLogClass(data):
             name=productInfo["name"],
             price=productInfo["price"]
         )
-
+        
         purchaseLog = PurchaseLog(
             email=item["email"],
             gender=item["gender"],
@@ -39,7 +47,7 @@ def parseJsonToPurchaseLogClass(data):
             quantity=item["quantity"],
             starCount=item["starCount"],
             totalPrice=item["totalPrice"],
-            purchaseTime=datetime.strptime(item["purchaseTime"], '%Y-%m-%dT%H:%M:%S'),
+            purchaseTime=parse_datetime(item["purchaseTime"]),
             isRefund=item["isRefund"]
         )
         purchaseLogs.append(purchaseLog)
