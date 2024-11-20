@@ -64,7 +64,7 @@ def generateCoupon(length=12):
     return ''.join(random.choices(characters, k=length))
 
 # 쿠폰의 발급 유무를 판단, 발급 시 (category, code, disCountPercent)를 리턴하고, 아닐 경우 None을 리턴한다.
-def distinctCoupon(purchaseJson, lastPurchase = 6, purchaseWithCategory = 3, refundPercent = 50, number = 5):
+def distinctCoupon(purchaseJson, lastPurchase = 6, lastRefund = 3, refundPercent = 50, purchaseWithCategory = 3, purchaseNumber = 5):
     purchaseLogList = parseJsonToPurchaseLogClass(purchaseJson)
 
     # 최근 1개월동안 환불 여부 확인을 위한 변수
@@ -74,14 +74,14 @@ def distinctCoupon(purchaseJson, lastPurchase = 6, purchaseWithCategory = 3, ref
     month3 = dict()
     # 최근 6개월동안 이용 내역을 확인하기 위한 변수
     isExit = False
-    
+
+    daysDifference = (datetime.now() - purchaseLog.purchaseTime).days
     #purchaseLogList 값을 하나씩 탐색하며 조건 확인
     for purchaseLog in purchaseLogList:
-        daysDifference = (datetime.now() - purchaseLog.purchaseTime).days
-
-        if daysDifference < 30:
+        if daysDifference < 30 * lastRefund:
             month1 = month1 + 1
             if purchaseLog.isRefund: refundCount = refundCount + 1
+
         if daysDifference < purchaseWithCategory * 30:
             if not purchaseLog.isRefund:
                 key = purchaseLog.product.category
@@ -95,13 +95,13 @@ def distinctCoupon(purchaseJson, lastPurchase = 6, purchaseWithCategory = 3, ref
     # 6개월 동안(default) 구매기록이 없을 경우 15%(default) 쿠폰 발급
     if not isExit:
         return Coupon(None, generateCoupon(), 15).to_dict()
-    # 1개월 동안 5번 이상 구매, 절반 이상(default)이 환불일 경우 10% 쿠폰 발급
-    if month1 != 0 and (refundCount // month1) * 100 >  refundPercent and month1 > 5:
+    # 3개월(default) 동안 5번(수정 불가) 이상 구매, 절반 이상(default)이 환불일 경우 10% 쿠폰 발급
+    if month1 != 0 and ((refundCount // month1) * 100 >  refundPercent) and month1 > 5:
         return Coupon(None, generateCoupon(), 10).to_dict()
     
     # dictionary를 순차 탐색하며 3개월 동안(default) 5회 이상(default) 구매한 카테고리의 10% 쿠폰 발급
     for key, value in month3.items():
-        if value >= number:
+        if value >= purchaseNumber:
             return Coupon(key, generateCoupon(), 10).to_dict()
     
     return None

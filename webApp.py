@@ -13,18 +13,21 @@ def outfluxAPI():
     if body and "lastPurchase" in body: lastPurchase = body.get('lastPurchase')
     else: lastPurchase = 6
 
-    if body and "purchaseWithCategory" in body: purchaseWithCategory = body.get('purchaseWithCategory')
-    else: purchaseWithCategory = 3
+    if body and "lastRefund" in body: lastRefund = body.get('lastRefund')
+    else: lastRefund = 3
 
     if body and "refundPercent" in body: refundPercent = body.get('refundPercent')
     else: refundPercent = 50
 
-    if body and "number" in body: number = body.get('number')
-    else: number = 5
+    if body and "purchaseWithCategory" in body: purchaseWithCategory = body.get('purchaseWithCategory')
+    else: purchaseWithCategory = 3
+
+    if body and "purchaseNumber" in body: purchaseNumber = body.get('purchaseNumber')
+    else: purchaseNumber = 5
 
     purchaseJson = body.get('purchaseLog')
 
-    result = distinctCoupon(purchaseJson=purchaseJson, lastPurchase=lastPurchase, purchaseWithCategory=purchaseWithCategory, number=number, refundPercent=refundPercent)
+    result = distinctCoupon(purchaseJson=purchaseJson, lastPurchase=lastPurchase, lastRefund = lastRefund, refundPercent=refundPercent, purchaseWithCategory=purchaseWithCategory, purchaseNumber=purchaseNumber)
     response = make_response(jsonify(result))
     response.status_code = 200
 
