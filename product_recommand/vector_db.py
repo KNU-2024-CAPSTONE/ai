@@ -51,6 +51,8 @@ def loadVectorDB(productList, shoppingMallName, update=False):
 
 # k는 반환할 유사한 제품의 개수, isReview, isStarCount, isPostDate는 각각 리뷰 수, 별점, 등록일을 점수에 반영할 지의 여부를 결정, 기본값은 True
 def findSimilarProduct(product, vectorstore, k=4, isReview = True, isStarCount = True, isPostDate = True):
+    if k <= 0: return None
+    
     retriever = vectorstore.as_retriever(search_kwargs={"k": 2*k})
 
     results = retriever.invoke(product)

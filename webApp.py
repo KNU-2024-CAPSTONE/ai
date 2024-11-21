@@ -57,7 +57,12 @@ def productRecommandAPI():
     else: k = 4
 
     result = productRecommand(productJson, shoppingMallName, product, k, isReview, isStarCount, isPostDate)
-    response = make_response(jsonify([prod.to_dict() for prod in result]))
+
+    if result is not None:
+        response = make_response(jsonify([prod.to_dict() for prod in result]))
+    else:
+        response = make_response("done")
+    
     response.status_code = 200
 
     return response

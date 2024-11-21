@@ -133,7 +133,7 @@ POST /api/ai/product-recommand
 
 Request Body
 - productList : 제품 목록(선택)
-- shopingMallName : 쇼핑몰 이름(필수)
+- shoppingMallName : 쇼핑몰 이름(필수)
 - product : 구매한 제품(필수)
 - isReview : 점수에 리뷰 포함할 지 여부(선택)
 - isStarCount : 점수에 평균 별점 포함할 지 여부(선택)
